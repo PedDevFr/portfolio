@@ -83,7 +83,9 @@ function showModal(type, title, message) {
 // Reemplaza 'YOUR_PUBLIC_KEY' con tu Public Key de EmailJS
 const EMAILJS_PUBLIC_KEY = '3GBIupBbgiWpSlV8P';
 const EMAILJS_SERVICE_ID = 'service_5qsbvt2';
-const EMAILJS_TEMPLATE_ID = 'template_a3dfxmh';
+const EMAILJS_TEMPLATE_ID_NOTIFICATION = 'template_a3dfxmh';
+const EMAILJS_TEMPLATE_ID_CONFIRMATION = 'template_ceudljj';
+
 
 // Tooltip de WhatsApp
 document.addEventListener('DOMContentLoaded', function() {
@@ -115,8 +117,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             // Validar que EmailJS esté configurado
-            if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || !EMAILJS_SERVICE_ID) {
-                showModal('error', 'Error de configuración', 'El servicio de correo no está configurado correctamente. Por favor, configura el TEMPLATE_ID en script.js');
+            if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || 
+                !EMAILJS_TEMPLATE_ID_CONFIRMATION || 
+                !EMAILJS_TEMPLATE_ID_NOTIFICATION || 
+                !EMAILJS_SERVICE_ID) {
+                showModal('error', 'Error de configuración', 'El servicio de correo no está configurado correctamente. Por favor, verifica las constantes en script.js');
                 return;
             }
             
@@ -226,9 +231,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     html_content: confirmationEmailHtml
                 };
                 
+                // Enviar correo de confirmación al usuario
                 const confirmationResponse = await emailjs.send(
                     EMAILJS_SERVICE_ID,
-                    EMAILJS_TEMPLATE_ID,
+                    EMAILJS_TEMPLATE_ID_CONFIRMATION,
                     confirmationData
                 );
                 
@@ -243,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const notificationResponse = await emailjs.send(
                     EMAILJS_SERVICE_ID,
-                    EMAILJS_TEMPLATE_ID,
+                    EMAILJS_TEMPLATE_ID_NOTIFICATION,
                     notificationData
                 );
                 
