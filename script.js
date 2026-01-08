@@ -144,25 +144,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Configurar scroll suave para los enlaces del menú
+    // Configurar scroll suave para los enlaces del menú (solo para enlaces de anclas)
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                const navHeight = document.querySelector('.nav').offsetHeight;
-                const targetPosition = targetElement.offsetTop - navHeight - 20;
+            const href = this.getAttribute('href');
+            // Solo prevenir default si es un ancla (#)
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
                 
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
+                if (targetElement) {
+                    const navHeight = document.querySelector('.nav').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - navHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
             }
+            // Si no es un ancla (es un enlace de descarga), dejar que el navegador maneje el clic normalmente
         });
     });
+    
+    // Asegurar que el botón de descarga CV funcione correctamente
+    const downloadCvDesktop = document.getElementById('download-cv-desktop');
+    if (downloadCvDesktop) {
+        downloadCvDesktop.addEventListener('click', function(e) {
+            // No prevenir el comportamiento por defecto para permitir la descarga
+            const href = this.getAttribute('href');
+            if (href) {
+                // Forzar la descarga si el navegador no la maneja automáticamente
+                const link = document.createElement('a');
+                link.href = href;
+                link.download = this.getAttribute('download') || 'CV_Pedro_Infante.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+    }
     
     const tooltip = document.querySelector('.whatsapp-tooltip');
     
