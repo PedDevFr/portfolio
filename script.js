@@ -79,8 +79,19 @@ function showModal(type, title, message) {
     document.addEventListener('keydown', escapeHandler);
 }
 
+// Inicializar EmailJS
+// Reemplaza 'YOUR_PUBLIC_KEY' con tu Public Key de EmailJS
+const EMAILJS_PUBLIC_KEY = '3GBIupBbgiWpSlV8P';
+const EMAILJS_SERVICE_ID = 'service_5qsbvt2';
+const EMAILJS_TEMPLATE_ID = 'template_a3dfxmh';
+
 // Tooltip de WhatsApp
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar EmailJS
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+    
     const tooltip = document.querySelector('.whatsapp-tooltip');
     
     if (tooltip) {
@@ -103,6 +114,12 @@ document.addEventListener('DOMContentLoaded', function() {
         contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Validar que EmailJS esté configurado
+            if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY' || EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || !EMAILJS_SERVICE_ID) {
+                showModal('error', 'Error de configuración', 'El servicio de correo no está configurado correctamente. Por favor, configura el TEMPLATE_ID en script.js');
+                return;
+            }
+            
             // Bloquear el botón
             submitButton.disabled = true;
             submitButton.style.opacity = '0.6';
@@ -111,29 +128,65 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mostrar modal de carga
             showLoadingModal();
             
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            // HTML personalizado del correo (mismo que tenías en el servidor)
+            const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Nuevo mensaje recibido</h1>
+    </div>
+    
+    <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; margin-bottom: 20px;">
+            Has recibido un nuevo mensaje a través de tu portafolio.
+        </p>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
+            <h3 style="color: #667eea; margin-top: 0;">Información del contacto:</h3>
+            <p style="margin: 5px 0;"><strong>Nombre:</strong> ${name}</p>
+            <p style="margin: 5px 0;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #667eea; text-decoration: none;">${email}</a></p>
+            <p style="margin: 5px 0;"><strong>Mensaje:</strong></p>
+            <p style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap;">${message.replace(/\n/g, '<br>')}</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <a href="mailto:${email}" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Responder correo</a>
+        </div>
+    </div>
+</body>
+</html>
+            `;
+            
             const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                message: document.getElementById('message').value
+                from_name: name,
+                from_email: email,
+                message: message,
+                to_email: 'peinfantepoma@outlook.com',
+                html_content: emailHtml // Enviamos el HTML completo
             };
             
             try {
-                const response = await fetch('https://portfolio-production-7e00.up.railway.app/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
+                // Enviar correo con EmailJS
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    formData
+                );
                 
                 // Ocultar modal de carga
                 hideLoadingModal();
                 
                 // Pequeño delay para transición suave
                 setTimeout(() => {
-                    if (data.success) {
+                    if (response.status === 200) {
                         showModal('success', '¡Mensaje enviado!', 'Tu mensaje ha sido enviado correctamente. Te responderé pronto.');
                         contactForm.reset();
                     } else {
@@ -147,10 +200,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Pequeño delay para transición suave
                 setTimeout(() => {
-                    showModal('error', 'Error de conexión', 'Hubo un problema al conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.');
+                    console.error('Error EmailJS:', error);
+                    showModal('error', 'Error al enviar', 'Hubo un problema al enviar el mensaje. Por favor, verifica tu conexión e inténtalo de nuevo.');
                 }, 300);
-                
-                console.error('Error:', error);
             } finally {
                 // Restaurar el botón
                 submitButton.disabled = false;
