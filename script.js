@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             try {
-                const response = await fetch('http://localhost:3000/send-email', {
+                const response = await fetch('https://portfolio-production-7e00.up.railway.app/send-email', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
