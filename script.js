@@ -132,8 +132,59 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
             
-            // HTML personalizado del correo (mismo que tenías en el servidor)
-            const emailHtml = `
+            // HTML personalizado del correo de confirmación (para el usuario)
+            const confirmationEmailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">¡Hola ${name}!</h1>
+    </div>
+    
+    <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px; margin-bottom: 20px;">
+            Gracias por contactarme a través de mi portafolio. He recibido tu mensaje y me pondré en contacto contigo lo antes posible.
+        </p>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
+            <h3 style="color: #667eea; margin-top: 0;">Resumen de tu mensaje:</h3>
+            <p style="margin: 5px 0;"><strong>Nombre:</strong> ${name}</p>
+            <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
+            <p style="margin: 5px 0;"><strong>Mensaje:</strong></p>
+            <p style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap;">${message.replace(/\n/g, '<br>')}</p>
+        </div>
+        
+        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #667eea; margin-top: 0;">¿Cómo contactarme?</h3>
+            <p style="margin: 10px 0;">
+                <strong>📧 Email:</strong> 
+                <a href="mailto:peinfantepoma@outlook.com" style="color: #667eea; text-decoration: none;">peinfantepoma@outlook.com</a>
+            </p>
+            <p style="margin: 10px 0;">
+                <strong>📱 WhatsApp:</strong> 
+                <a href="https://wa.me/51942221250" style="color: #667eea; text-decoration: none;">Contáctame por WhatsApp</a>
+            </p>
+        </div>
+        
+        <p style="font-size: 14px; color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            Este es un correo automático de confirmación. Si tienes alguna pregunta adicional, no dudes en responder este correo o contactarme directamente.
+        </p>
+        
+        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+            Saludos cordiales,<br>
+            <strong style="color: #667eea;">Pedro Infante</strong><br>
+            <em>Desarrollador Frontend</em>
+        </p>
+    </div>
+</body>
+</html>
+            `;
+            
+            // HTML personalizado del correo de notificación (para ti)
+            const notificationEmailHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -165,20 +216,35 @@ document.addEventListener('DOMContentLoaded', function() {
 </html>
             `;
             
-            const formData = {
-                from_name: name,
-                from_email: email,
-                message: message,
-                to_email: 'peinfantepoma@outlook.com',
-                html_content: emailHtml // Enviamos el HTML completo
-            };
-            
             try {
-                // Enviar correo con EmailJS
-                const response = await emailjs.send(
+                // Enviar correo de confirmación al usuario
+                const confirmationData = {
+                    from_name: name,
+                    from_email: email,
+                    message: message,
+                    to_email: email, // Al usuario que completó el formulario
+                    html_content: confirmationEmailHtml
+                };
+                
+                const confirmationResponse = await emailjs.send(
                     EMAILJS_SERVICE_ID,
                     EMAILJS_TEMPLATE_ID,
-                    formData
+                    confirmationData
+                );
+                
+                // Enviar correo de notificación a ti
+                const notificationData = {
+                    from_name: name,
+                    from_email: email,
+                    message: message,
+                    to_email: 'peinfantepoma@outlook.com', // A tu email
+                    html_content: notificationEmailHtml
+                };
+                
+                const notificationResponse = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    notificationData
                 );
                 
                 // Ocultar modal de carga
@@ -186,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Pequeño delay para transición suave
                 setTimeout(() => {
-                    if (response.status === 200) {
+                    if (confirmationResponse.status === 200 && notificationResponse.status === 200) {
                         showModal('success', '¡Mensaje enviado!', 'Tu mensaje ha sido enviado correctamente. Te responderé pronto.');
                         contactForm.reset();
                     } else {
