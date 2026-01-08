@@ -224,11 +224,13 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 // Enviar correo de confirmación al usuario
                 const confirmationData = {
-                    from_name: name,
-                    from_email: email,
-                    message: message,
-                    to_email: email, // Al usuario que completó el formulario
-                    html_content: confirmationEmailHtml
+                    from_name: name,        // Para {{from_name}} en el subject
+                    name: name,             // Para {{name}} en "From Name"
+                    from_email: email,      // Para uso interno
+                    email: email,           // Para {{email}} en "Reply To"
+                    message: message,       // Para el mensaje si lo necesitas
+                    to_email: email,        // Para {{to_email}} - al usuario que completó el formulario
+                    html_content: confirmationEmailHtml  // Para {{html_content}} en el contenido
                 };
                 
                 // Enviar correo de confirmación al usuario
@@ -240,11 +242,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Enviar correo de notificación a ti
                 const notificationData = {
-                    from_name: name,
-                    from_email: email,
-                    message: message,
-                    to_email: 'peinfantepoma@outlook.com', // A tu email
-                    html_content: notificationEmailHtml
+                    from_name: name,        // Para {{from_name}} en el subject
+                    name: name,             // Para {{name}} en "From Name"
+                    from_email: email,      // Para uso interno
+                    email: email,           // Para {{email}} en "Reply To"
+                    message: message,       // Para el mensaje si lo necesitas
+                    to_email: 'peinfantepoma@outlook.com',  // Para {{to_email}} - a tu email
+                    html_content: notificationEmailHtml     // Para {{html_content}} en el contenido
                 };
                 
                 const notificationResponse = await emailjs.send(
