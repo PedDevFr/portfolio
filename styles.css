@@ -69,6 +69,38 @@ body {
     white-space: nowrap;
 }
 
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+}
+
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: rgb(15, 27, 97);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
 .nav-menu {
     display: flex;
     align-items: center;
@@ -111,6 +143,14 @@ body {
     width: 100%;
 }
 
+.nav-link-cv {
+    display: none;
+}
+
+.nav-link-cv::after {
+    display: none;
+}
+
 .nav-right {
     display: flex;
     align-items: center;
@@ -125,10 +165,13 @@ body {
     padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
 }
 
 .hire-me:hover {
     background: rgba(168, 85, 247, 0.1);
+    transform: translateY(-2px);
 }
 
 .hire-me svg {
@@ -395,11 +438,16 @@ body {
     padding: 80px 30px;
     margin: 30px;
     margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .contact-container {
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
 }
 
 .contact-title {
@@ -418,6 +466,8 @@ body {
     grid-template-columns: 1fr 1.2fr;
     gap: 60px;
     align-items: start;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .contact-info {
@@ -520,6 +570,8 @@ body {
     padding: 40px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(15, 27, 97, 0.08);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .contact-form {
@@ -732,26 +784,90 @@ body {
     
     .nav {
         padding: 12px 20px;
-        flex-wrap: wrap;
+    }
+    
+    .hamburger {
+        display: flex;
     }
     
     .nav-left {
-        gap: 24px;
+        gap: 20px;
+        width: 100%;
+        justify-content: space-between;
     }
     
     .nav-menu {
-        gap: 18px;
-        flex-wrap: wrap;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        background: rgba(244, 249, 252, 0.98);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 30px 30px 30px;
+        gap: 0;
+        box-shadow: 4px 0 32px rgba(0, 0, 0, 0.15);
+        transform: translateX(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 999;
+        overflow-y: auto;
+    }
+    
+    .nav-menu.active {
+        transform: translateX(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .nav-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 998;
+        pointer-events: none;
+    }
+    
+    .nav-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
     }
     
     .nav-link {
-        font-size: 11px;
-        letter-spacing: 1px;
-        padding: 6px 0;
+        font-size: 16px;
+        letter-spacing: 2px;
+        padding: 16px 0;
+        width: 100%;
+        border-bottom: 1px solid rgba(15, 27, 97, 0.1);
+    }
+    
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+    
+    .nav-link-cv {
+        display: flex;
+        align-items: center;
+        margin-top: 16px;
+        padding-top: 20px;
+        border-top: 2px solid rgba(15, 27, 97, 0.2);
+        font-weight: 700;
+        color: #A855F7;
     }
     
     .nav-right {
-        margin-left: 20px;
+        display: none;
     }
     
     .hire-me {
@@ -827,47 +943,89 @@ body {
     }
     
     .contact-section {
-        padding: 60px 20px;
+        padding: 40px 15px;
         margin: 15px;
         margin-top: 0;
+        width: calc(100% - 30px);
+        box-sizing: border-box;
+    }
+    
+    .contact-container {
+        padding: 0;
+        width: 100%;
     }
     
     .contact-title {
-        font-size: 40px;
+        font-size: 36px;
         line-height: 40px;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+        padding: 0 10px;
     }
     
     .contact-content {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 30px;
+        width: 100%;
     }
     
-    .contact-form-wrapper {
-        padding: 30px 20px;
+    .contact-info {
+        width: 100%;
+        gap: 20px;
     }
     
     .info-card {
-        padding: 24px;
-        gap: 20px;
+        padding: 20px;
+        gap: 16px;
+        flex-wrap: wrap;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .info-icon {
-        width: 56px;
-        height: 56px;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+    }
+    
+    .info-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .info-content {
+        min-width: 0;
+        flex: 1;
+    }
+    
+    .info-label {
+        font-size: 12px;
+        line-height: 16px;
+        margin-bottom: 6px;
     }
     
     .info-value {
-        font-size: 18px;
-        line-height: 24px;
+        font-size: 16px;
+        line-height: 22px;
+        word-break: break-word;
+    }
+    
+    .contact-form-wrapper {
+        padding: 25px 20px;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .contact-form {
-        gap: 20px;
+        gap: 18px;
+        width: 100%;
+    }
+    
+    .form-group {
+        width: 100%;
     }
     
     .form-label {
-        font-size: 16px;
+        font-size: 15px;
         line-height: 20px;
     }
     
@@ -875,14 +1033,21 @@ body {
     .form-textarea {
         font-size: 14px;
         line-height: 20px;
-        padding: 12px 16px;
+        padding: 12px 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .form-textarea {
+        min-height: 100px;
     }
     
     .form-submit {
-        font-size: 16px;
-        padding: 14px 28px;
+        font-size: 15px;
+        padding: 14px 24px;
         align-self: stretch;
         justify-content: center;
+        width: 100%;
     }
 }
 
@@ -1083,16 +1248,16 @@ body {
 @media (max-width: 480px) {
     .nav {
         padding: 12px 16px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+    }
+    
+    .hamburger {
+        display: flex;
     }
     
     .nav-left {
         width: 100%;
         justify-content: space-between;
         gap: 16px;
-        flex-wrap: wrap;
     }
     
     .logo-text {
@@ -1100,39 +1265,109 @@ body {
     }
     
     .nav-menu {
-        width: 100%;
-        margin-top: 0;
-        gap: 16px;
-        justify-content: flex-start;
-        flex-wrap: wrap;
+        width: 260px;
+        padding: 70px 20px 20px 20px;
     }
     
     .nav-link {
-        font-size: 10px;
-        letter-spacing: 1px;
-        padding: 4px 0;
+        font-size: 14px;
+        letter-spacing: 1.5px;
+        padding: 14px 0;
+    }
+    
+    .nav-link-cv {
+        display: flex;
+        align-items: center;
+        margin-top: 12px;
+        padding-top: 16px;
     }
     
     .nav-right {
+        display: none;
+    }
+    
+    .contact-section {
+        padding: 30px 10px;
+        margin: 10px;
+        margin-top: 0;
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+    }
+    
+    .contact-container {
+        padding: 0;
         width: 100%;
-        justify-content: flex-end;
-        margin-left: 0;
-        margin-top: 4px;
     }
     
-    .hire-me {
-        padding: 6px 12px;
-        gap: 6px;
+    .contact-title {
+        font-size: 28px;
+        line-height: 32px;
+        margin-bottom: 25px;
+        padding: 0 5px;
     }
     
-    .hire-me span {
-        font-size: 10px;
-        letter-spacing: 3px;
+    .contact-content {
+        gap: 25px;
     }
     
-    .hire-me svg {
+    .info-card {
+        padding: 16px;
+        gap: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .info-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .info-icon svg {
         width: 20px;
         height: 20px;
+    }
+    
+    .info-label {
+        font-size: 11px;
+        line-height: 14px;
+    }
+    
+    .info-value {
+        font-size: 14px;
+        line-height: 20px;
+        word-break: break-word;
+    }
+    
+    .contact-form-wrapper {
+        padding: 20px 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .contact-form {
+        gap: 16px;
+    }
+    
+    .form-label {
+        font-size: 14px;
+        line-height: 18px;
+    }
+    
+    .form-input,
+    .form-textarea {
+        font-size: 13px;
+        line-height: 18px;
+        padding: 10px 12px;
+    }
+    
+    .form-textarea {
+        min-height: 100px;
+    }
+    
+    .form-submit {
+        font-size: 14px;
+        padding: 12px 20px;
+        width: 100%;
     }
 }
 

@@ -94,6 +94,56 @@ document.addEventListener('DOMContentLoaded', function() {
         emailjs.init(EMAILJS_PUBLIC_KEY);
     }
     
+    // Menú hamburguesa
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    const navOverlay = document.querySelector('.nav-overlay');
+    const body = document.body;
+    
+    if (hamburger && navMenu) {
+        function toggleMenu() {
+            const isActive = navMenu.classList.contains('active');
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            if (navOverlay) {
+                navOverlay.classList.toggle('active');
+            }
+            body.style.overflow = !isActive ? 'hidden' : '';
+        }
+        
+        function closeMenu() {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            if (navOverlay) {
+                navOverlay.classList.remove('active');
+            }
+            body.style.overflow = '';
+        }
+        
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMenu();
+        });
+        
+        // Cerrar menú al hacer clic en el overlay
+        if (navOverlay) {
+            navOverlay.addEventListener('click', closeMenu);
+        }
+        
+        // Cerrar menú al hacer clic en un enlace
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+        
+        // Cerrar menú con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+    }
+    
     // Configurar scroll suave para los enlaces del menú
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
