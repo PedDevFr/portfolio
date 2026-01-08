@@ -94,6 +94,26 @@ document.addEventListener('DOMContentLoaded', function() {
         emailjs.init(EMAILJS_PUBLIC_KEY);
     }
     
+    // Configurar scroll suave para los enlaces del menú
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                const navHeight = document.querySelector('.nav').offsetHeight;
+                const targetPosition = targetElement.offsetTop - navHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
     const tooltip = document.querySelector('.whatsapp-tooltip');
     
     if (tooltip) {
@@ -133,9 +153,22 @@ document.addEventListener('DOMContentLoaded', function() {
             // Mostrar modal de carga
             showLoadingModal();
             
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                hideLoadingModal();
+                setTimeout(() => {
+                    showModal('error', 'Email inválido', 'Por favor, ingresa un correo electrónico válido (ejemplo: nombre@dominio.com)');
+                }, 300);
+                submitButton.disabled = false;
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+                return;
+            }
             
             try {
                 // Enviar correo de confirmación al usuario
